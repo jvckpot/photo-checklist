@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Property Inspection Checklist</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    
+    <!-- SCREEN 1: Setup Wizard -->
+    <div id="setupScreen" class="screen active">
+        <div class="container">
+            <h1>📋 Property Inspection</h1>
+            <p class="subtitle">Let's set up your inspection</p>
+            
+            <div class="form-group">
+                <label for="unitNumber">Unit Number *</label>
+                <input type="text" id="unitNumber" placeholder="e.g., 101" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="moveInDate">Move-In Date *</label>
+                <input type="date" id="moveInDate" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="numBedrooms">Number of Bedrooms *</label>
+                <select id="numBedrooms">
+                    <option value="0">Studio</option>
+                    <option value="1" selected>1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5+</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="numBathrooms">Number of Bathrooms *</label>
+                <select id="numBathrooms">
+                    <option value="1" selected>1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4+</option>
+                </select>
+            </div>
+            
+            <button class="btn-primary" id="startInspection">Start Inspection →</button>
+            <button class="btn-secondary" id="customizeBtn">⚙️ Customize Checklist</button>
+        </div>
+    </div>
+
+    <!-- SCREEN 2: Customize Checklist -->
+    <div id="customizeScreen" class="screen">
+        <div class="container">
+            <h1>⚙️ Customize Checklist</h1>
+            <p class="subtitle">Select items to include in your inspection</p>
+            
+            <div class="category-toggles" id="categoryToggles">
+                <!-- Generated dynamically by JavaScript -->
+            </div>
+            
+            <div class="button-group">
+                <button class="btn-secondary" id="backToSetup">← Back</button>
+                <button class="btn-primary" id="saveCustomization">Save & Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREEN 3: Main Checklist -->
+    <div id="checklistScreen" class="screen">
+        <div class="header">
+            <div class="header-info">
+                <h2 id="inspectionTitle">Unit #</h2>
+                <p id="progressText">0 of 0 items complete</p>
+            </div>
+            <button class="btn-icon" id="settingsBtn">⚙️</button>
+        </div>
+        
+        <div class="container">
+            <div id="checklistContent">
+                <!-- Generated dynamically by JavaScript -->
+            </div>
+            
+            <button class="btn-success" id="finishInspection" style="display: none;">
+                ✓ Finish & Export Photos
+            </button>
+        </div>
+    </div>
+
+    <!-- SCREEN 4: Camera View -->
+    <div id="cameraScreen" class="screen">
+        <div class="camera-header">
+            <button class="btn-icon" id="closeCameraBtn">✕</button>
+            <h3 id="cameraItemTitle">Taking Photo</h3>
+            <span id="photoCount">0 photos</span>
+        </div>
+        
+        <div class="camera-container">
+            <video id="cameraVideo" autoplay playsinline></video>
+            <canvas id="cameraCanvas" style="display: none;"></canvas>
+        </div>
+        
+        <div class="camera-controls">
+            <div class="photo-thumbnails" id="photoThumbnails"></div>
+            <button class="btn-capture" id="captureBtn">📷</button>
+            <button class="btn-primary" id="donePhotosBtn">Done (0)</button>
+        </div>
+    </div>
+
+    <!-- SCREEN 5: Review & Export -->
+    <div id="reviewScreen" class="screen">
+        <div class="container">
+            <h1>✓ Inspection Complete!</h1>
+            <p class="subtitle" id="reviewSummary">Review your photos</p>
+            
+            <div id="reviewContent">
+                <!-- Generated dynamically by JavaScript -->
+            </div>
+            
+            <div class="button-group">
+                <button class="btn-secondary" id="backToChecklist">← Back to Checklist</button>
+                <button class="btn-success" id="exportBtn">📦 Download ZIP</button>
+            </div>
+            
+            <button class="btn-link" id="startNewInspection">Start New Inspection</button>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="overlay" style="display: none;">
+        <div class="spinner"></div>
+        <p>Creating ZIP file...</p>
+    </div>
+
+    <!-- Wake Lock Indicator -->
+    <div id="wakeLockIndicator" class="wake-indicator" style="display: none;">
+        🔒 Screen Lock Disabled
+    </div>
+
+    <!-- Scripts -->
+    <!-- JSZip library for creating ZIP files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/camera.js"></script>
+    <script src="js/export.js"></script>
+</body>
+</html>

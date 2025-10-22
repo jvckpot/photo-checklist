@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Test</title>
+</head>
+<body>
+    <h1>JavaScript Error Test</h1>
+    <p>Check console (F12) for errors</p>
+    <button id="testBtn">Click Me</button>
+    
+    <script src="js/app.js"></script>
+    <script>
+        console.log('Script loaded successfully');
+        console.log('appState:', window.appState);
+        
+        document.getElementById('testBtn').addEventListener('click', () => {
+            console.log('Button clicked!');
+            alert('Button works!');
+        });
+    </script>
+</body>
+</html>
