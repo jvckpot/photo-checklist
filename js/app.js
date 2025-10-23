@@ -1,4 +1,32 @@
 // ============================================
+// PREVENT ZOOM GLOBALLY
+// ============================================
+(function preventZoom() {
+    // Prevent double-tap zoom
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function(event) {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, { passive: false });
+    
+    // Prevent pinch zoom
+    document.addEventListener('gesturestart', function(e) {
+        e.preventDefault();
+    });
+    
+    document.addEventListener('gesturechange', function(e) {
+        e.preventDefault();
+    });
+    
+    document.addEventListener('gestureend', function(e) {
+        e.preventDefault();
+    });
+})();
+
+// ============================================
 // CHECKLIST DATA STRUCTURE
 // ============================================
 const CHECKLIST_TEMPLATE = {

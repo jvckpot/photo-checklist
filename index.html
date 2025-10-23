@@ -103,6 +103,17 @@
         <div class="camera-container">
             <video id="cameraVideo" autoplay playsinline></video>
             <canvas id="cameraCanvas" style="display: none;"></canvas>
+            
+            <!-- Zoom Controls Overlay -->
+            <div class="zoom-controls" id="zoomControls" style="display: none;">
+                <button class="zoom-btn zoom-preset" id="zoom05x">0.5x</button>
+                <button class="zoom-btn zoom-preset active" id="zoom1x">1x</button>
+                <button class="zoom-btn zoom-preset" id="zoom2x">2x</button>
+                <div class="zoom-divider"></div>
+                <button class="zoom-btn zoom-fine" id="zoomOutBtn">−</button>
+                <span class="zoom-level" id="zoomLevel">1.0x</span>
+                <button class="zoom-btn zoom-fine" id="zoomInBtn">+</button>
+            </div>
         </div>
         
         <div class="camera-controls">
