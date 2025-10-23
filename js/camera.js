@@ -1,5 +1,6 @@
 // ============================================
-// CAMERA FUNCTIONALITY v1.2.0
+// CAMERA FUNCTIONALITY v2.0.0
+// Enhanced with pinch-to-zoom and vertical slider
 // ============================================
 let cameraStream = null;
 let wakeLock = null;
@@ -8,6 +9,10 @@ let videoTrack = null;
 let zoomCapabilities = null;
 let sessionPhotos = []; // Track photos added during this camera session
 let isTablet = false;
+
+// Pinch-to-zoom variables
+let initialPinchDistance = 0;
+let initialPinchZoom = 1;
 
 // ============================================
 // DETECT DEVICE TYPE
@@ -49,10 +54,11 @@ async function startCamera() {
         // Check if zoom is supported
         zoomCapabilities = videoTrack.getCapabilities();
         if (zoomCapabilities.zoom) {
-            setupZoomControls(zoomCapabilities);
+            setupZoomSlider(zoomCapabilities);
+            setupPinchToZoom();
         } else {
             // Hide zoom controls if not supported
-            document.getElementById('zoomControls').style.display = 'none';
+            document.getElementById('zoomSliderContainer').style.display = 'none';
         }
         
         // Position capture button based on device
@@ -93,74 +99,107 @@ function positionCaptureButton() {
 }
 
 // ============================================
-// ZOOM CONTROLS
+// ZOOM SLIDER SETUP
 // ============================================
-function setupZoomControls(capabilities) {
-    const zoomContainer = document.getElementById('zoomControls');
-    if (!zoomContainer) return;
+function setupZoomSlider(capabilities) {
+    const sliderContainer = document.getElementById('zoomSliderContainer');
+    const slider = document.getElementById('zoomSlider');
+    const zoomValue = document.getElementById('zoomValue');
+    
+    if (!sliderContainer || !slider) return;
     
     const minZoom = capabilities.zoom.min || 1;
-    const maxZoom = capabilities.zoom.max || 3;
-    const step = capabilities.zoom.step || 0.1;
+    const maxZoom = capabilities.zoom.max || 5;
     currentZoom = minZoom;
     
-    // Show zoom controls
-    zoomContainer.style.display = 'flex';
+    // Configure slider
+    slider.min = minZoom;
+    slider.max = maxZoom;
+    slider.value = currentZoom;
+    slider.step = 0.1;
     
-    // Preset buttons
-    const zoom05Btn = document.getElementById('zoom05x');
-    const zoom1Btn = document.getElementById('zoom1x');
-    const zoom2Btn = document.getElementById('zoom2x');
-    const zoomLevel = document.getElementById('zoomLevel');
+    // Show slider
+    sliderContainer.style.display = 'flex';
     
-    function updateZoom(newZoom) {
-        currentZoom = Math.max(minZoom, Math.min(maxZoom, newZoom));
-        videoTrack.applyConstraints({
-            advanced: [{ zoom: currentZoom }]
-        }).catch(err => console.log('Zoom not applied:', err));
-        
-        zoomLevel.textContent = `${currentZoom.toFixed(1)}x`;
-        
-        // Highlight active button
-        [zoom05Btn, zoom1Btn, zoom2Btn].forEach(btn => btn?.classList.remove('active'));
-        if (Math.abs(currentZoom - 0.5) < 0.1 && zoom05Btn) zoom05Btn.classList.add('active');
-        if (Math.abs(currentZoom - 1.0) < 0.1 && zoom1Btn) zoom1Btn.classList.add('active');
-        if (Math.abs(currentZoom - 2.0) < 0.1 && zoom2Btn) zoom2Btn.classList.add('active');
-    }
-    
-    // Preset zoom buttons
-    if (zoom05Btn && minZoom <= 0.5) {
-        zoom05Btn.addEventListener('click', () => updateZoom(0.5));
-        zoom05Btn.style.display = 'block';
-    } else if (zoom05Btn) {
-        zoom05Btn.style.display = 'none';
-    }
-    
-    if (zoom1Btn) {
-        zoom1Btn.addEventListener('click', () => updateZoom(1.0));
-    }
-    
-    if (zoom2Btn && maxZoom >= 2.0) {
-        zoom2Btn.addEventListener('click', () => updateZoom(2.0));
-        zoom2Btn.style.display = 'block';
-    } else if (zoom2Btn) {
-        zoom2Btn.style.display = 'none';
-    }
-    
-    // Fine control buttons
-    const zoomOutBtn = document.getElementById('zoomOutBtn');
-    const zoomInBtn = document.getElementById('zoomInBtn');
-    
-    if (zoomOutBtn) {
-        zoomOutBtn.addEventListener('click', () => updateZoom(currentZoom - step));
-    }
-    
-    if (zoomInBtn) {
-        zoomInBtn.addEventListener('click', () => updateZoom(currentZoom + step));
-    }
+    // Update zoom on slider change
+    slider.addEventListener('input', (e) => {
+        const newZoom = parseFloat(e.target.value);
+        applyZoom(newZoom);
+    });
     
     // Initialize display
-    updateZoom(currentZoom);
+    zoomValue.textContent = `${currentZoom.toFixed(1)}x`;
+}
+
+// ============================================
+// APPLY ZOOM TO CAMERA
+// ============================================
+function applyZoom(newZoom) {
+    if (!videoTrack || !zoomCapabilities?.zoom) return;
+    
+    const minZoom = zoomCapabilities.zoom.min || 1;
+    const maxZoom = zoomCapabilities.zoom.max || 5;
+    
+    // Clamp zoom value
+    currentZoom = Math.max(minZoom, Math.min(maxZoom, newZoom));
+    
+    // Apply to video track
+    videoTrack.applyConstraints({
+        advanced: [{ zoom: currentZoom }]
+    }).catch(err => console.log('Zoom not applied:', err));
+    
+    // Update UI
+    const slider = document.getElementById('zoomSlider');
+    const zoomValue = document.getElementById('zoomValue');
+    
+    if (slider) slider.value = currentZoom;
+    if (zoomValue) zoomValue.textContent = `${currentZoom.toFixed(1)}x`;
+}
+
+// ============================================
+// PINCH-TO-ZOOM ON CAMERA
+// ============================================
+function setupPinchToZoom() {
+    const cameraContainer = document.querySelector('.camera-container');
+    if (!cameraContainer) return;
+    
+    cameraContainer.addEventListener('touchstart', handlePinchStart);
+    cameraContainer.addEventListener('touchmove', handlePinchMove);
+    cameraContainer.addEventListener('touchend', handlePinchEnd);
+}
+
+function handlePinchStart(e) {
+    if (e.touches.length === 2) {
+        e.preventDefault();
+        initialPinchDistance = getPinchDistance(e.touches);
+        initialPinchZoom = currentZoom;
+    }
+}
+
+function handlePinchMove(e) {
+    if (e.touches.length === 2) {
+        e.preventDefault();
+        
+        const currentDistance = getPinchDistance(e.touches);
+        const distanceRatio = currentDistance / initialPinchDistance;
+        
+        // Calculate new zoom based on pinch ratio
+        const newZoom = initialPinchZoom * distanceRatio;
+        applyZoom(newZoom);
+    }
+}
+
+function handlePinchEnd(e) {
+    if (e.touches.length < 2) {
+        initialPinchDistance = 0;
+        initialPinchZoom = currentZoom;
+    }
+}
+
+function getPinchDistance(touches) {
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
 }
 
 // ============================================
@@ -257,9 +296,9 @@ function updatePhotoThumbnails() {
         img.src = photoData;
         img.className = 'photo-thumbnail';
         
-        // Preview on click
+        // Preview on click with pinch-to-zoom
         img.addEventListener('click', () => {
-            showPhotoPreview(photoData);
+            showPhotoPreview(photoData, index);
         });
         
         // Delete button overlay
@@ -291,9 +330,9 @@ function updatePhotoThumbnails() {
 }
 
 // ============================================
-// PHOTO PREVIEW
+// PHOTO PREVIEW WITH PINCH-TO-ZOOM
 // ============================================
-function showPhotoPreview(photoData) {
+function showPhotoPreview(photoData, photoIndex) {
     // Create fullscreen overlay
     const overlay = document.createElement('div');
     overlay.className = 'photo-preview-overlay';
@@ -308,21 +347,110 @@ function showPhotoPreview(photoData) {
         align-items: center;
         justify-content: center;
         z-index: 10000;
+        overflow: hidden;
+    `;
+    
+    // Create container for image (allows transform)
+    const imgContainer = document.createElement('div');
+    imgContainer.style.cssText = `
+        position: relative;
+        max-width: 95%;
+        max-height: 95%;
+        touch-action: none;
     `;
     
     const img = document.createElement('img');
     img.src = photoData;
     img.style.cssText = `
-        max-width: 95%;
-        max-height: 95%;
+        max-width: 100%;
+        max-height: 100vh;
         object-fit: contain;
+        transform-origin: center center;
+        transition: transform 0.1s ease-out;
     `;
     
-    overlay.appendChild(img);
+    imgContainer.appendChild(img);
+    overlay.appendChild(imgContainer);
     
-    // Close on click
-    overlay.addEventListener('click', () => {
-        overlay.remove();
+    // Pinch-to-zoom variables for preview
+    let previewScale = 1;
+    let previewInitialDistance = 0;
+    let previewInitialScale = 1;
+    let previewTranslateX = 0;
+    let previewTranslateY = 0;
+    let isDragging = false;
+    let lastTouchX = 0;
+    let lastTouchY = 0;
+    
+    // Get original image dimensions
+    img.onload = () => {
+        const originalWidth = img.offsetWidth;
+        const originalHeight = img.offsetHeight;
+        
+        // Pinch-to-zoom on preview
+        overlay.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                previewInitialDistance = getPinchDistance(e.touches);
+                previewInitialScale = previewScale;
+            } else if (e.touches.length === 1 && previewScale > 1) {
+                // Pan when zoomed
+                isDragging = true;
+                lastTouchX = e.touches[0].clientX;
+                lastTouchY = e.touches[0].clientY;
+            }
+        });
+        
+        overlay.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                
+                const currentDistance = getPinchDistance(e.touches);
+                const distanceRatio = currentDistance / previewInitialDistance;
+                
+                // Calculate new scale (minimum is 1, no smaller than original)
+                const newScale = Math.max(1, previewInitialScale * distanceRatio);
+                previewScale = newScale;
+                
+                updatePreviewTransform();
+            } else if (e.touches.length === 1 && isDragging && previewScale > 1) {
+                e.preventDefault();
+                
+                const dx = e.touches[0].clientX - lastTouchX;
+                const dy = e.touches[0].clientY - lastTouchY;
+                
+                previewTranslateX += dx;
+                previewTranslateY += dy;
+                
+                lastTouchX = e.touches[0].clientX;
+                lastTouchY = e.touches[0].clientY;
+                
+                updatePreviewTransform();
+            }
+        });
+        
+        overlay.addEventListener('touchend', (e) => {
+            if (e.touches.length < 2) {
+                previewInitialDistance = 0;
+                isDragging = false;
+            }
+            
+            // Close on single tap when not zoomed
+            if (e.touches.length === 0 && previewScale === 1) {
+                overlay.remove();
+            }
+        });
+        
+        function updatePreviewTransform() {
+            img.style.transform = `scale(${previewScale}) translate(${previewTranslateX / previewScale}px, ${previewTranslateY / previewScale}px)`;
+        }
+    };
+    
+    // Close on click (desktop/fallback)
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay && previewScale === 1) {
+            overlay.remove();
+        }
     });
     
     document.body.appendChild(overlay);

@@ -653,68 +653,70 @@ input, select, textarea {
 }
 
 /* ============================================
-   ZOOM CONTROLS (NEW)
+   ZOOM SLIDER - VERTICAL (NEW)
    ============================================ */
-.zoom-controls {
+.zoom-slider-container {
     position: absolute;
-    top: 70px;
-    left: 50%;
-    transform: translateX(-50%);
+    right: 20px;
+    bottom: 140px;
     display: flex;
-    gap: 8px;
+    flex-direction: column;
     align-items: center;
-    background: rgba(0,0,0,0.15);
-    padding: 8px 16px;
-    border-radius: 24px;
+    gap: 12px;
     z-index: 25;
+    background: rgba(0,0,0,0.3);
+    padding: 16px 12px;
+    border-radius: 24px;
+    backdrop-filter: blur(10px);
 }
 
-.zoom-btn {
-    padding: 6px 14px;
-    background: rgba(255,255,255,0.2);
-    border: 1px solid rgba(255,255,255,0.3);
-    color: white;
-    border-radius: 16px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    min-width: 40px;
-}
-
-.zoom-btn:active {
-    background: rgba(255,255,255,0.4);
-    transform: scale(0.95);
-}
-
-.zoom-btn.active {
-    background: rgba(255,255,255,0.4);
-    border-color: rgba(255,255,255,0.6);
-}
-
-.zoom-preset {
-    font-size: 13px;
-}
-
-.zoom-fine {
-    font-size: 18px;
-    font-weight: 700;
-    padding: 4px 12px;
-}
-
-.zoom-level {
-    color: white;
-    font-size: 14px;
-    font-weight: 600;
-    min-width: 45px;
-    text-align: center;
-}
-
-.zoom-divider {
-    width: 1px;
-    height: 20px;
+.zoom-slider {
+    -webkit-appearance: slider-vertical;
+    appearance: slider-vertical;
+    writing-mode: bt-lr;
+    width: 6px;
+    height: 200px;
     background: rgba(255,255,255,0.3);
-    margin: 0 4px;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+}
+
+.zoom-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    background: white;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    transition: transform 0.1s;
+}
+
+.zoom-slider::-webkit-slider-thumb:active {
+    transform: scale(1.2);
+}
+
+.zoom-slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    background: white;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.zoom-value {
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    min-width: 45px;
+    background: rgba(0,0,0,0.4);
+    padding: 4px 8px;
+    border-radius: 12px;
 }
 
 /* ============================================
