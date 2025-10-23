@@ -270,17 +270,14 @@ function loadExistingPhotos() {
 function updatePhotoThumbnails() {
     const container = document.getElementById('photoThumbnails');
     const controlsBar = document.getElementById('cameraControlsBar');
-    const rightControls = document.querySelector('.camera-right-controls');
     const itemKey = window.appState.currentItem.key;
     const photos = window.appState.photos[itemKey] || [];
     
     // Show/hide bottom bar based on photo count
     if (photos.length > 0) {
         controlsBar.style.display = 'flex';
-        rightControls.classList.add('with-photos');
     } else {
         controlsBar.style.display = 'none';
-        rightControls.classList.remove('with-photos');
     }
     
     container.innerHTML = '';
