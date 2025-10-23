@@ -77,25 +77,11 @@ async function startCamera() {
 }
 
 // ============================================
-// POSITION CAPTURE BUTTON FOR TABLETS
+// POSITION CAPTURE BUTTON (No longer needed - using fixed positioning)
 // ============================================
 function positionCaptureButton() {
-    const captureBtn = document.getElementById('captureBtn');
-    
-    if (isTablet) {
-        // Position in center-right for tablet ergonomics
-        captureBtn.style.position = 'fixed';
-        captureBtn.style.right = '5%';
-        captureBtn.style.bottom = '30%'; // Lower third of screen
-        captureBtn.style.left = 'auto';
-        captureBtn.style.transform = 'translateY(0)';
-    } else {
-        // Keep centered for phone
-        captureBtn.style.position = 'static';
-        captureBtn.style.right = 'auto';
-        captureBtn.style.bottom = 'auto';
-        captureBtn.style.transform = 'none';
-    }
+    // Camera button now uses consistent fixed positioning via CSS
+    // No dynamic repositioning needed
 }
 
 // ============================================
@@ -283,8 +269,16 @@ function loadExistingPhotos() {
 // ============================================
 function updatePhotoThumbnails() {
     const container = document.getElementById('photoThumbnails');
+    const controlsBar = document.getElementById('cameraControlsBar');
     const itemKey = window.appState.currentItem.key;
     const photos = window.appState.photos[itemKey] || [];
+    
+    // Show/hide bottom bar based on photo count
+    if (photos.length > 0) {
+        controlsBar.style.display = 'flex';
+    } else {
+        controlsBar.style.display = 'none';
+    }
     
     container.innerHTML = '';
     
