@@ -326,8 +326,7 @@ h3 {
 #cameraScreen {
     padding: 0;
     background: #000;
-    display: flex;
-    flex-direction: column;
+    position: relative;
     height: 100vh;
     overflow: hidden;
 }
@@ -338,7 +337,11 @@ h3 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-shrink: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
 }
 
 .camera-header h3,
@@ -363,12 +366,15 @@ h3 {
 }
 
 .camera-container {
-    flex: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    position: relative;
 }
 
 #cameraVideo {
@@ -378,14 +384,17 @@ h3 {
 }
 
 .camera-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
     background: rgba(0,0,0,0.8);
     padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 16px;
-    position: relative;
-    flex-shrink: 0;
+    z-index: 20;
 }
 
 .photo-thumbnails {
@@ -394,6 +403,7 @@ h3 {
     overflow-x: auto;
     width: 100%;
     padding: 8px 0;
+    max-height: 76px;
 }
 
 .photo-thumbnail {
@@ -403,6 +413,7 @@ h3 {
     object-fit: cover;
     border: 2px solid white;
     flex-shrink: 0;
+    cursor: pointer;
 }
 
 .btn-capture {
@@ -437,7 +448,7 @@ h3 {
     border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
-    z-index: 10;
+    z-index: 30;
 }
 
 #donePhotosBtn:active {
@@ -611,15 +622,7 @@ h3 {
    WAKE LOCK INDICATOR
    ============================================ */
 .wake-indicator {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: rgba(0,0,0,0.8);
-    color: white;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 13px;
-    z-index: 999;
+    display: none !important;
 }
 
 /* ============================================

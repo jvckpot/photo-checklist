@@ -54,8 +54,7 @@ async function requestWakeLock() {
     try {
         if ('wakeLock' in navigator) {
             wakeLock = await navigator.wakeLock.request('screen');
-            document.getElementById('wakeLockIndicator').style.display = 'block';
-            
+            // Wake lock active but no indicator shown
             wakeLock.addEventListener('release', () => {
                 console.log('Wake lock released');
             });
@@ -69,7 +68,6 @@ function releaseWakeLock() {
     if (wakeLock) {
         wakeLock.release();
         wakeLock = null;
-        document.getElementById('wakeLockIndicator').style.display = 'none';
     }
 }
 
