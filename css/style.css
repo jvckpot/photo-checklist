@@ -667,6 +667,12 @@ input, select, textarea {
     align-items: center;
     gap: 16px;
     z-index: 25;
+    transition: bottom 0.3s ease;
+}
+
+/* Shift up when bottom bar is visible */
+.camera-right-controls.with-photos {
+    bottom: 160px;
 }
 
 /* ============================================
