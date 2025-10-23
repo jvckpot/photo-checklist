@@ -102,15 +102,34 @@ function setupZoomSlider(capabilities) {
     slider.min = minZoom;
     slider.max = maxZoom;
     slider.value = currentZoom;
-    slider.step = 0.1;
+    slider.step = 0.05; // Smaller step for smoother control
     
     // Show slider
     sliderContainer.style.display = 'flex';
     
-    // Update zoom on slider change
+    // Debounce timer for constraint application
+    let applyZoomTimer = null;
+    
+    // Update zoom on slider input (immediate UI feedback)
     slider.addEventListener('input', (e) => {
         const newZoom = parseFloat(e.target.value);
-        applyZoom(newZoom);
+        currentZoom = newZoom;
+        
+        // Update UI immediately (no lag)
+        zoomValue.textContent = `${currentZoom.toFixed(1)}x`;
+        
+        // Debounce actual camera constraint application
+        clearTimeout(applyZoomTimer);
+        applyZoomTimer = setTimeout(() => {
+            applyZoomToCamera(newZoom);
+        }, 50); // Apply after 50ms of no changes
+    });
+    
+    // Also apply on change (when user releases slider)
+    slider.addEventListener('change', (e) => {
+        clearTimeout(applyZoomTimer);
+        const newZoom = parseFloat(e.target.value);
+        applyZoomToCamera(newZoom);
     });
     
     // Initialize display
@@ -118,7 +137,25 @@ function setupZoomSlider(capabilities) {
 }
 
 // ============================================
-// APPLY ZOOM TO CAMERA
+// APPLY ZOOM TO CAMERA (Optimized)
+// ============================================
+function applyZoomToCamera(newZoom) {
+    if (!videoTrack || !zoomCapabilities?.zoom) return;
+    
+    const minZoom = zoomCapabilities.zoom.min || 1;
+    const maxZoom = zoomCapabilities.zoom.max || 5;
+    
+    // Clamp zoom value
+    currentZoom = Math.max(minZoom, Math.min(maxZoom, newZoom));
+    
+    // Apply to video track (async but we don't wait)
+    videoTrack.applyConstraints({
+        advanced: [{ zoom: currentZoom }]
+    }).catch(err => console.log('Zoom not applied:', err));
+}
+
+// ============================================
+// APPLY ZOOM (Legacy - for pinch-to-zoom)
 // ============================================
 function applyZoom(newZoom) {
     if (!videoTrack || !zoomCapabilities?.zoom) return;
