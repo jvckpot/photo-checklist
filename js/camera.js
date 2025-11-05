@@ -134,6 +134,9 @@ function setupZoomSlider(capabilities) {
     
     // Initialize display
     zoomValue.textContent = `${currentZoom.toFixed(1)}x`;
+    
+    // Apply initial zoom to camera hardware (sync with slider)
+    applyZoomToCamera(currentZoom);
 }
 
 // ============================================
