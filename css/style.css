@@ -346,6 +346,7 @@ h3 {
     right: 0;
     z-index: 20;
     backdrop-filter: blur(10px);
+    transition: all 0.3s ease-out;
 }
 
 .camera-header h3,
@@ -380,6 +381,7 @@ h3 {
     justify-content: center;
     overflow: hidden;
     touch-action: none;
+    transition: all 0.3s ease-out;
 }
 
 #cameraVideo {
@@ -387,6 +389,7 @@ h3 {
     height: 100%;
     object-fit: cover;
     touch-action: none;
+    transition: all 0.3s ease-out;
 }
 
 .camera-controls {
@@ -402,6 +405,7 @@ h3 {
     gap: 16px;
     z-index: 20;
     backdrop-filter: blur(10px);
+    transition: all 0.3s ease-out;
 }
 
 .photo-thumbnails {
@@ -671,6 +675,7 @@ input, select, textarea {
     align-items: center;
     gap: 16px;
     z-index: 25;
+    transition: all 0.3s ease-out;
 }
 
 /* ============================================
