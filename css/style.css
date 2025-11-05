@@ -331,6 +331,7 @@ h3 {
     position: relative;
     height: 100vh;
     overflow: hidden;
+    touch-action: none;
 }
 
 .camera-header {
@@ -378,12 +379,14 @@ h3 {
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    touch-action: none;
 }
 
 #cameraVideo {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    touch-action: none;
 }
 
 .camera-controls {
@@ -408,6 +411,7 @@ h3 {
     width: 100%;
     padding: 8px 0;
     max-height: 76px;
+    touch-action: pan-x;
 }
 
 .photo-thumbnail {
@@ -696,6 +700,7 @@ input, select, textarea {
     cursor: pointer;
     padding: 0 16px;
     box-sizing: content-box;
+    touch-action: pan-y;
 }
 
 .zoom-slider::-webkit-slider-thumb {
