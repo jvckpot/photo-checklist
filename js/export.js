@@ -63,7 +63,9 @@ async function exportPhotos() {
         
         loadingOverlay.style.display = 'none';
         
-        alert(`ZIP file downloaded successfully!\n\nFilename: ${zipFilename}\n\nYou can now upload this to your Teams folder.`);
+        // No alert - let the browser handle download naturally
+        // iOS will show "Open With..." dialog
+        // Android/Desktop will download directly
         
     } catch (error) {
         console.error('Export error:', error);
