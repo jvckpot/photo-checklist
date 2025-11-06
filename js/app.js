@@ -108,6 +108,7 @@ const CHECKLIST_TEMPLATE = {
 // ============================================
 const appState = {
     unitNumber: '',
+    inspectionType: 'MoveIn',
     moveInDate: '',
     numBedrooms: 1,
     numBathrooms: 1,
@@ -199,6 +200,7 @@ function showScreen(screenId) {
 function startInspection() {
     // Validate inputs
     const unitNumber = document.getElementById('unitNumber').value.trim();
+    const inspectionType = document.getElementById('inspectionType').value;
     const moveInDate = document.getElementById('moveInDate').value;
     
     if (!unitNumber || !moveInDate) {
@@ -208,6 +210,7 @@ function startInspection() {
     
     // Save setup data
     appState.unitNumber = unitNumber;
+    appState.inspectionType = inspectionType;
     appState.moveInDate = moveInDate;
     appState.numBedrooms = parseInt(document.getElementById('numBedrooms').value);
     appState.numBathrooms = parseInt(document.getElementById('numBathrooms').value);

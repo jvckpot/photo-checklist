@@ -8,7 +8,6 @@ async function exportPhotos() {
     try {
         // Create ZIP using JSZip library
         const zip = new JSZip();
-        const photosFolder = zip.folder('photos');
         
         // Iterate through all photos
         let photoCounter = 1;
@@ -22,15 +21,16 @@ async function exportPhotos() {
                 
                 if (photos && photos.length > 0) {
                     photos.forEach((photoData, photoIndex) => {
-                        // Create filename: Category_Item_PhotoNumber.jpg
-                        const cleanItem = item.replace(/[/\\]/g, '-');
-                        const filename = `${photoCounter}_${category.title}_${cleanItem}_${photoIndex + 1}.jpg`;
+                        // Create filename: PhotoNumber_Category_Item_PhotoIndex.jpg
+                        const cleanCategory = category.title.replace(/[/\\:*?"<>|]/g, '-');
+                        const cleanItem = item.replace(/[/\\:*?"<>|]/g, '-');
+                        const filename = `${photoCounter}_${cleanCategory}_${cleanItem}_${photoIndex + 1}.jpg`;
                         
                         // Remove data URL prefix
                         const base64Data = photoData.split(',')[1];
                         
-                        // Add to ZIP
-                        photosFolder.file(filename, base64Data, { base64: true });
+                        // Add directly to ZIP root (no subfolder)
+                        zip.file(filename, base64Data, { base64: true });
                         photoCounter++;
                     });
                 }
@@ -44,10 +44,11 @@ async function exportPhotos() {
             compressionOptions: { level: 6 }
         });
         
-        // Create download filename
+        // Create download filename with inspection type
         const unitNum = window.appState.unitNumber;
-        const moveInDate = window.appState.moveInDate;
-        const zipFilename = `Unit_${unitNum}_MoveIn_${moveInDate}.zip`;
+        const inspectionType = window.appState.inspectionType;
+        const inspectionDate = window.appState.moveInDate;
+        const zipFilename = `Unit_${unitNum}_${inspectionType}_${inspectionDate}.zip`;
         
         // Trigger download
         const link = document.createElement('a');
