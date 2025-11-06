@@ -125,6 +125,7 @@ const appState = {
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
     loadPreferences();
+    updateUnitNumberInput();
     initializeEventListeners();
 });
 
@@ -136,6 +137,23 @@ function loadPreferences() {
     } else {
         // Default: all items enabled
         enableAllItems();
+    }
+}
+
+function updateUnitNumberInput() {
+    const unitNumberInput = document.getElementById('unitNumber');
+    const savedType = localStorage.getItem('unitNumberingType') || 'alphanumeric';
+    
+    if (savedType === 'numeric') {
+        unitNumberInput.type = 'tel';
+        unitNumberInput.inputMode = 'numeric';
+        unitNumberInput.pattern = '[0-9]*';
+        unitNumberInput.placeholder = 'e.g., 101';
+    } else {
+        unitNumberInput.type = 'text';
+        unitNumberInput.inputMode = 'text';
+        unitNumberInput.removeAttribute('pattern');
+        unitNumberInput.placeholder = 'e.g., 101 or A101';
     }
 }
 
@@ -191,6 +209,8 @@ function showScreen(screenId) {
         renderCustomizeScreen();
     } else if (screenId === 'reviewScreen') {
         renderReviewScreen();
+    } else if (screenId === 'setupScreen') {
+        updateUnitNumberInput();
     }
 }
 
@@ -423,6 +443,58 @@ function renderCustomizeScreen() {
     const container = document.getElementById('categoryToggles');
     container.innerHTML = '';
     
+    // Add Unit Numbering Preference at the top
+    const unitNumberingSetting = document.createElement('div');
+    unitNumberingSetting.className = 'toggle-category';
+    unitNumberingSetting.style.borderBottom = '2px solid var(--gray-300)';
+    
+    const settingHeader = document.createElement('div');
+    settingHeader.className = 'category-header';
+    
+    const settingTitle = document.createElement('h3');
+    settingTitle.textContent = 'Unit Numbering';
+    settingTitle.style.fontSize = '16px';
+    settingTitle.style.fontWeight = '600';
+    
+    const settingValue = document.createElement('select');
+    settingValue.id = 'unitNumberingType';
+    settingValue.style.cssText = `
+        padding: 6px 12px;
+        border: 2px solid var(--gray-300);
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        background: white;
+        cursor: pointer;
+    `;
+    
+    const optionAlpha = document.createElement('option');
+    optionAlpha.value = 'alphanumeric';
+    optionAlpha.textContent = 'Alpha Numeric';
+    
+    const optionNumeric = document.createElement('option');
+    optionNumeric.value = 'numeric';
+    optionNumeric.textContent = 'Numeric';
+    
+    settingValue.appendChild(optionAlpha);
+    settingValue.appendChild(optionNumeric);
+    
+    // Load saved preference (default: alphanumeric)
+    const savedType = localStorage.getItem('unitNumberingType') || 'alphanumeric';
+    settingValue.value = savedType;
+    
+    // Save preference on change
+    settingValue.addEventListener('change', () => {
+        localStorage.setItem('unitNumberingType', settingValue.value);
+        updateUnitNumberInput();
+    });
+    
+    settingHeader.appendChild(settingTitle);
+    settingHeader.appendChild(settingValue);
+    unitNumberingSetting.appendChild(settingHeader);
+    container.appendChild(unitNumberingSetting);
+    
+    // Rest of customize screen (category toggles)
     Object.keys(CHECKLIST_TEMPLATE).forEach(categoryKey => {
         const category = CHECKLIST_TEMPLATE[categoryKey];
         
@@ -511,6 +583,7 @@ function renderCustomizeScreen() {
 
 function saveCustomization() {
     savePreferences();
+    updateUnitNumberInput();
     showScreen('setupScreen');
     alert('Checklist customization saved!');
 }
