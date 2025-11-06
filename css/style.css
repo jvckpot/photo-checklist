@@ -816,3 +816,210 @@ input, select, textarea {
     max-height: 95%;
     object-fit: contain;
 }
+
+/* ============================================
+   CUSTOM NUMPAD (iPad-Friendly)
+   ============================================ */
+.numpad-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10001;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 20px;
+    animation: numpadSlideUp 0.3s ease-out;
+}
+
+@keyframes numpadSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.numpad-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.numpad-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+    margin: 0 20px;
+}
+
+/* Numpad Display Area */
+.numpad-display {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 2px solid rgba(0, 0, 0, 0.08);
+    min-height: 80px;
+}
+
+.numpad-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-600);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.numpad-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--gray-900);
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    font-variant-numeric: tabular-nums;
+}
+
+.numpad-value:empty::before {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 32px;
+    background: var(--primary-color);
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+/* Numpad Grid */
+.numpad-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+/* Numpad Buttons - Rectangular Apple Style */
+.numpad-btn {
+    background: white;
+    border: none;
+    border-radius: 12px;
+    height: 64px;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--gray-900);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.1),
+        0 1px 2px rgba(0, 0, 0, 0.06),
+        0 0 0 1px rgba(0, 0, 0, 0.04) inset;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+.numpad-btn:active {
+    transform: scale(0.95);
+    background: var(--gray-100);
+    box-shadow: 
+        0 1px 3px rgba(0, 0, 0, 0.12),
+        0 0 0 1px rgba(0, 0, 0, 0.08) inset;
+}
+
+/* Special Button Styling */
+.numpad-backspace {
+    background: var(--gray-200);
+    color: var(--gray-700);
+}
+
+.numpad-backspace:active {
+    background: var(--gray-300);
+}
+
+.numpad-done {
+    background: var(--primary-color);
+    color: white;
+}
+
+.numpad-done:active {
+    background: #1d4ed8;
+}
+
+/* Icon sizing in buttons */
+.numpad-btn i {
+    font-size: 24px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .numpad-container {
+        max-width: 100%;
+        margin: 0 12px;
+        padding: 20px;
+        border-radius: 20px;
+    }
+    
+    .numpad-btn {
+        height: 56px;
+        font-size: 24px;
+    }
+    
+    .numpad-value {
+        font-size: 28px;
+    }
+}
+
+/* Landscape mode adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+    .numpad-overlay {
+        padding-bottom: 10px;
+    }
+    
+    .numpad-container {
+        padding: 16px;
+    }
+    
+    .numpad-display {
+        padding: 12px;
+        min-height: 60px;
+        margin-bottom: 12px;
+    }
+    
+    .numpad-value {
+        font-size: 24px;
+        min-height: 30px;
+    }
+    
+    .numpad-btn {
+        height: 48px;
+        font-size: 20px;
+    }
+    
+    .numpad-grid {
+        gap: 8px;
+    }
+}

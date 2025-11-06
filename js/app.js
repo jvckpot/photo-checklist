@@ -140,23 +140,6 @@ function loadPreferences() {
     }
 }
 
-function updateUnitNumberInput() {
-    const unitNumberInput = document.getElementById('unitNumber');
-    const savedType = localStorage.getItem('unitNumberingType') || 'alphanumeric';
-    
-    if (savedType === 'numeric') {
-        unitNumberInput.type = 'tel';
-        unitNumberInput.inputMode = 'numeric';
-        unitNumberInput.pattern = '[0-9]*';
-        unitNumberInput.placeholder = 'e.g., 101';
-    } else {
-        unitNumberInput.type = 'text';
-        unitNumberInput.inputMode = 'text';
-        unitNumberInput.removeAttribute('pattern');
-        unitNumberInput.placeholder = 'e.g., 101 or A101';
-    }
-}
-
 function enableAllItems() {
     appState.enabledItems = {};
     Object.keys(CHECKLIST_TEMPLATE).forEach(category => {
@@ -691,3 +674,134 @@ function resetApp() {
 
 // Export appState for use in other modules
 window.appState = appState;
+
+// ============================================
+// CUSTOM NUMPAD (iPad-Friendly)
+// ============================================
+class CustomNumpad {
+    constructor() {
+        this.overlay = document.getElementById('customNumpadOverlay');
+        this.display = document.getElementById('numpadValue');
+        this.targetInput = null;
+        this.value = '';
+        
+        this.init();
+    }
+    
+    init() {
+        // Button click handlers
+        const buttons = this.overlay.querySelectorAll('.numpad-btn');
+        buttons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.handleButtonClick(btn);
+            });
+        });
+        
+        // Backdrop click to close
+        const backdrop = this.overlay.querySelector('.numpad-backdrop');
+        backdrop.addEventListener('click', () => this.close());
+        
+        // Prevent scroll on overlay
+        this.overlay.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+        }, { passive: false });
+    }
+    
+    handleButtonClick(btn) {
+        const value = btn.dataset.value;
+        const action = btn.dataset.action;
+        
+        // Haptic feedback (if available)
+        if (navigator.vibrate) {
+            navigator.vibrate(10);
+        }
+        
+        if (action === 'backspace') {
+            this.value = this.value.slice(0, -1);
+        } else if (action === 'done') {
+            this.done();
+            return;
+        } else if (value) {
+            this.value += value;
+        }
+        
+        this.updateDisplay();
+    }
+    
+    updateDisplay() {
+        this.display.textContent = this.value || '';
+    }
+    
+    show(inputElement) {
+        this.targetInput = inputElement;
+        this.value = inputElement.value || '';
+        this.updateDisplay();
+        this.overlay.style.display = 'flex';
+        
+        // Blur the input to prevent native keyboard
+        inputElement.blur();
+    }
+    
+    close() {
+        this.overlay.style.display = 'none';
+        this.targetInput = null;
+        this.value = '';
+    }
+    
+    done() {
+        if (this.targetInput) {
+            this.targetInput.value = this.value;
+            // Trigger input event for any listeners
+            this.targetInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        this.close();
+    }
+}
+
+// Initialize numpad
+const customNumpad = new CustomNumpad();
+
+// Modify updateUnitNumberInput to use custom numpad on iPad
+function updateUnitNumberInput() {
+    const unitNumberInput = document.getElementById('unitNumber');
+    if (!unitNumberInput) return; // Safety check
+    
+    const savedType = localStorage.getItem('unitNumberingType') || 'alphanumeric';
+    
+    // Remove any existing click listeners
+    const newInput = unitNumberInput.cloneNode(true);
+    unitNumberInput.replaceWith(newInput);
+    
+    if (savedType === 'numeric') {
+        // Detect if device is iPad
+        const isIPad = /iPad|Macintosh/.test(navigator.userAgent) && 'ontouchend' in document;
+        
+        if (isIPad) {
+            // Use custom numpad for iPad
+            newInput.type = 'text';
+            newInput.inputMode = 'none'; // Prevent keyboard
+            newInput.placeholder = 'e.g., 101';
+            newInput.readOnly = true;
+            
+            newInput.addEventListener('click', (e) => {
+                e.preventDefault();
+                customNumpad.show(document.getElementById('unitNumber'));
+            });
+        } else {
+            // Use native numeric keyboard for iPhone/Android
+            newInput.type = 'tel';
+            newInput.inputMode = 'numeric';
+            newInput.pattern = '[0-9]*';
+            newInput.placeholder = 'e.g., 101';
+            newInput.readOnly = false;
+        }
+    } else {
+        // Alpha numeric mode - standard keyboard
+        newInput.type = 'text';
+        newInput.inputMode = 'text';
+        newInput.removeAttribute('pattern');
+        newInput.placeholder = 'e.g., 101 or A101';
+        newInput.readOnly = false;
+    }
+}

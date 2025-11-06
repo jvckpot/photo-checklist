@@ -165,6 +165,35 @@
         🔒 Screen Lock Disabled
     </div>
 
+    <!-- Custom Numpad Overlay -->
+    <div id="customNumpadOverlay" class="numpad-overlay" style="display: none;">
+        <div class="numpad-backdrop"></div>
+        <div class="numpad-container">
+            <div class="numpad-display">
+                <div class="numpad-label">Unit Number</div>
+                <div class="numpad-value" id="numpadValue"></div>
+            </div>
+            <div class="numpad-grid">
+                <button class="numpad-btn" data-value="1">1</button>
+                <button class="numpad-btn" data-value="2">2</button>
+                <button class="numpad-btn" data-value="3">3</button>
+                <button class="numpad-btn" data-value="4">4</button>
+                <button class="numpad-btn" data-value="5">5</button>
+                <button class="numpad-btn" data-value="6">6</button>
+                <button class="numpad-btn" data-value="7">7</button>
+                <button class="numpad-btn" data-value="8">8</button>
+                <button class="numpad-btn" data-value="9">9</button>
+                <button class="numpad-btn numpad-backspace" data-action="backspace">
+                    <i class="fa-solid fa-delete-left"></i>
+                </button>
+                <button class="numpad-btn" data-value="0">0</button>
+                <button class="numpad-btn numpad-done" data-action="done">
+                    <i class="fa-solid fa-check"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <!-- JSZip library for creating ZIP files -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
