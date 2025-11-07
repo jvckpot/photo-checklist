@@ -542,38 +542,52 @@ function doneWithPhotos() {
 // SCROLL TO NEXT ITEM
 // ============================================
 function scrollToNextItem(currentItemKey) {
-    // Find all checklist items
-    const allItems = document.querySelectorAll('.checklist-item');
-    
-    let foundCurrent = false;
-    let nextItem = null;
-    
-    // Find next incomplete item
-    allItems.forEach((itemElement) => {
-        if (foundCurrent && !nextItem) {
-            // Check if this item is incomplete
-            const hasCompleted = itemElement.classList.contains('completed');
-            const hasSkipped = itemElement.classList.contains('skipped');
-            
-            if (!hasCompleted && !hasSkipped) {
-                nextItem = itemElement;
-            }
-        }
+    // Small delay to ensure DOM has updated after renderChecklist()
+    setTimeout(() => {
+        // Find all checklist items
+        const allItems = document.querySelectorAll('.checklist-item');
         
-        // Check if this is our current item by matching the item name
-        const itemName = itemElement.querySelector('.item-name')?.textContent;
-        if (itemName === window.appState.currentItem.name) {
-            foundCurrent = true;
+        let foundCurrent = false;
+        let nextIncompleteItem = null;
+        
+        // Find next incomplete item after the current one
+        allItems.forEach((itemElement) => {
+            // Get the data-key attribute to reliably identify items
+            const itemKey = itemElement.getAttribute('data-key');
+            
+            // Mark when we've found the current item
+            if (itemKey === currentItemKey) {
+                foundCurrent = true;
+                return; // Skip to next iteration
+            }
+            
+            // Look for the first incomplete item after current
+            if (foundCurrent && !nextIncompleteItem) {
+                // Check completion status
+                const hasPhotos = itemElement.classList.contains('completed');
+                const hasSkipped = itemElement.classList.contains('skipped');
+                
+                // This item is incomplete - it's our target!
+                if (!hasPhotos && !hasSkipped) {
+                    nextIncompleteItem = itemElement;
+                }
+            }
+        });
+        
+        // Scroll to the next incomplete item, or stay at current position
+        if (nextIncompleteItem) {
+            // Smooth scroll with item centered on screen
+            nextIncompleteItem.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+            
+            console.log('Scrolled to next incomplete item');
+        } else {
+            console.log('No more incomplete items - staying at current position');
+            // Don't scroll anywhere - user is probably at or near the end
         }
-    });
-    
-    // Scroll to next item or top
-    if (nextItem) {
-        nextItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    } else {
-        // If no next item, scroll to top to see overall progress
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    }, 100); // 100ms delay ensures DOM is fully rendered
 }
 
 // ============================================

@@ -315,6 +315,7 @@ function renderChecklist() {
             
             const itemDiv = document.createElement('div');
             itemDiv.className = `checklist-item ${statusClass}`;
+            itemDiv.setAttribute('data-key', itemKey); // Add key for scroll targeting
             itemDiv.innerHTML = `
                 <div class="item-info">
                     <div class="item-name">${item}</div>
