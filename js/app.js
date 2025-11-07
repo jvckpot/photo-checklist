@@ -430,7 +430,7 @@ function renderCustomizeScreen() {
     // Add Unit Numbering Preference at the top
     const unitNumberingSetting = document.createElement('div');
     unitNumberingSetting.className = 'toggle-category';
-    unitNumberingSetting.style.borderBottom = '2px solid var(--gray-300)';
+    unitNumberingSetting.style.borderBottom = '2px solid var(--border-color)';
     
     const settingHeader = document.createElement('div');
     settingHeader.className = 'category-header';
@@ -439,16 +439,18 @@ function renderCustomizeScreen() {
     settingTitle.textContent = 'Unit Numbering';
     settingTitle.style.fontSize = '16px';
     settingTitle.style.fontWeight = '600';
+    settingTitle.style.color = 'var(--text-primary)';
     
     const settingValue = document.createElement('select');
     settingValue.id = 'unitNumberingType';
     settingValue.style.cssText = `
         padding: 6px 12px;
-        border: 2px solid var(--gray-300);
+        border: 2px solid var(--border-color);
         border-radius: 6px;
         font-size: 14px;
         font-weight: 500;
-        background: white;
+        background: var(--bg-secondary);
+        color: var(--text-primary);
         cursor: pointer;
     `;
     
@@ -483,30 +485,16 @@ function renderCustomizeScreen() {
     // ============================================
     const darkModeSetting = document.createElement('div');
     darkModeSetting.className = 'toggle-category';
-    darkModeSetting.style.cssText = `
-        background: var(--bg-secondary);
-        border-radius: 8px;
-        padding: 16px;
-        margin-bottom: 20px;
-        border: 2px solid var(--border-color);
-    `;
+    darkModeSetting.style.borderBottom = '2px solid var(--border-color)';
     
     const darkModeHeader = document.createElement('div');
     darkModeHeader.className = 'category-header';
-    darkModeHeader.style.cssText = `
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    `;
     
     const darkModeTitle = document.createElement('h3');
     darkModeTitle.textContent = 'Appearance';
-    darkModeTitle.style.cssText = `
-        font-size: 16px;
-        font-weight: 600;
-        margin: 0;
-        color: var(--text-primary);
-    `;
+    darkModeTitle.style.fontSize = '16px';
+    darkModeTitle.style.fontWeight = '600';
+    darkModeTitle.style.color = 'var(--text-primary)';
     
     const darkModeValue = document.createElement('select');
     darkModeValue.id = 'appearanceMode';
@@ -540,6 +528,8 @@ function renderCustomizeScreen() {
     darkModeValue.addEventListener('change', () => {
         localStorage.setItem('appearanceMode', darkModeValue.value);
         applyTheme(darkModeValue.value);
+        // Re-render customize screen to update styles
+        renderCustomizeScreen();
     });
     
     darkModeHeader.appendChild(darkModeTitle);

@@ -539,13 +539,14 @@ body.dark-mode .checklist-item.completed {
    CUSTOMIZE SCREEN
    ============================================ */
 .category-toggles {
-    background: white;
+    background: var(--bg-secondary);
     border-radius: 12px;
+    border: 1px solid var(--border-color);
 }
 
 .toggle-category {
     padding: 16px;
-    border-bottom: 1px solid var(--gray-200);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .toggle-category:last-child {
@@ -561,6 +562,7 @@ body.dark-mode .checklist-item.completed {
 
 .category-header h3 {
     font-size: 16px;
+    color: var(--text-primary);
 }
 
 .toggle-all {
@@ -573,13 +575,16 @@ body.dark-mode .checklist-item.completed {
     transition: background 0.3s;
 }
 
+body.dark-mode .toggle-all {
+    background: rgba(51, 65, 85, 0.8);
+}
+
 .toggle-all.active {
     background: var(--success-color);
 }
 
 .toggle-all::after {
     content: '';
-}
     position: absolute;
     width: 24px;
     height: 24px;
@@ -604,28 +609,31 @@ body.dark-mode .checklist-item.completed {
     align-items: center;
     padding: 8px 0;
     gap: 12px;
+    color: var(--text-primary);
 }
 
 .item-toggle input[type="checkbox"] {
     width: 20px;
     height: 20px;
     cursor: pointer;
+    accent-color: var(--primary-color);
 }
 
 /* ============================================
    REVIEW SCREEN
    ============================================ */
 .review-category {
-    background: white;
+    background: var(--bg-secondary);
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 16px;
+    border: 1px solid var(--border-color);
 }
 
 .review-item {
     margin-bottom: 20px;
     padding-bottom: 20px;
-    border-bottom: 1px solid var(--gray-200);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .review-item:last-child {
@@ -637,6 +645,7 @@ body.dark-mode .checklist-item.completed {
 .review-item h4 {
     margin-bottom: 12px;
     font-size: 15px;
+    color: var(--text-primary);
 }
 
 .review-item-skipped {
@@ -645,6 +654,7 @@ body.dark-mode .checklist-item.completed {
 
 .review-item-skipped h4 {
     font-style: italic;
+    color: var(--text-secondary);
 }
 
 .review-photos {
