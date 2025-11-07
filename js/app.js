@@ -165,7 +165,6 @@ function initializeEventListeners() {
     // Customize Screen
     document.getElementById('backToSetup').addEventListener('click', () => showScreen('setupScreen'));
     document.getElementById('saveCustomization').addEventListener('click', saveCustomization);
-    document.getElementById('saveCustomizationTop').addEventListener('click', saveCustomization);
     
     // Checklist Screen
     document.getElementById('settingsBtn').addEventListener('click', () => {

@@ -1121,3 +1121,105 @@ body.dark-mode .numpad-backspace:active {
         gap: 8px;
     }
 }
+
+/* ============================================
+   HEADER BUTTONS FOR CUSTOMIZE SCREEN
+   ============================================ */
+
+/* Header button styles - primary (Save) */
+.btn-header-primary {
+    padding: 8px 16px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.btn-header-primary:active {
+    transform: scale(0.95);
+    background: #1d4ed8;
+}
+
+body.dark-mode .btn-header-primary {
+    background: var(--primary-color);
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+}
+
+/* Header button styles - secondary (Back) */
+.btn-header-secondary {
+    padding: 8px 16px;
+    background: transparent;
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.btn-header-secondary:active {
+    transform: scale(0.95);
+    background: var(--bg-tertiary);
+}
+
+body.dark-mode .btn-header-secondary {
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+body.dark-mode .btn-header-secondary:active {
+    background: rgba(51, 65, 85, 0.5);
+}
+
+/* Update header layout for customize screen */
+#customizeScreen .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 12px;
+}
+
+#customizeScreen .header-info {
+    flex: 1;
+    text-align: center;
+}
+
+#customizeScreen .header-info h2 {
+    margin: 0;
+    font-size: 18px;
+}
+
+/* Icon sizing in header buttons */
+.btn-header-primary i,
+.btn-header-secondary i {
+    font-size: 12px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 400px) {
+    .btn-header-primary,
+    .btn-header-secondary {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+    
+    #customizeScreen .header-info h2 {
+        font-size: 16px;
+    }
+}
