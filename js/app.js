@@ -165,6 +165,7 @@ function initializeEventListeners() {
     // Customize Screen
     document.getElementById('backToSetup').addEventListener('click', () => showScreen('setupScreen'));
     document.getElementById('saveCustomization').addEventListener('click', saveCustomization);
+    document.getElementById('saveCustomizationTop').addEventListener('click', saveCustomization);
     
     // Checklist Screen
     document.getElementById('settingsBtn').addEventListener('click', () => {
@@ -477,6 +478,75 @@ function renderCustomizeScreen() {
     unitNumberingSetting.appendChild(settingHeader);
     container.appendChild(unitNumberingSetting);
     
+    // ============================================
+    // DARK MODE SETTING
+    // ============================================
+    const darkModeSetting = document.createElement('div');
+    darkModeSetting.className = 'toggle-category';
+    darkModeSetting.style.cssText = `
+        background: var(--bg-secondary);
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 20px;
+        border: 2px solid var(--border-color);
+    `;
+    
+    const darkModeHeader = document.createElement('div');
+    darkModeHeader.className = 'category-header';
+    darkModeHeader.style.cssText = `
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    `;
+    
+    const darkModeTitle = document.createElement('h3');
+    darkModeTitle.textContent = 'Appearance';
+    darkModeTitle.style.cssText = `
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0;
+        color: var(--text-primary);
+    `;
+    
+    const darkModeValue = document.createElement('select');
+    darkModeValue.id = 'appearanceMode';
+    darkModeValue.style.cssText = `
+        padding: 6px 12px;
+        border: 2px solid var(--border-color);
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        cursor: pointer;
+    `;
+    
+    const optionLight = document.createElement('option');
+    optionLight.value = 'light';
+    optionLight.textContent = 'Light Mode';
+    
+    const optionDark = document.createElement('option');
+    optionDark.value = 'dark';
+    optionDark.textContent = 'Dark Mode';
+    
+    darkModeValue.appendChild(optionLight);
+    darkModeValue.appendChild(optionDark);
+    
+    // Load saved preference (default: light)
+    const savedMode = localStorage.getItem('appearanceMode') || 'light';
+    darkModeValue.value = savedMode;
+    
+    // Save preference on change
+    darkModeValue.addEventListener('change', () => {
+        localStorage.setItem('appearanceMode', darkModeValue.value);
+        applyTheme(darkModeValue.value);
+    });
+    
+    darkModeHeader.appendChild(darkModeTitle);
+    darkModeHeader.appendChild(darkModeValue);
+    darkModeSetting.appendChild(darkModeHeader);
+    container.appendChild(darkModeSetting);
+    
     // Rest of customize screen (category toggles)
     Object.keys(CHECKLIST_TEMPLATE).forEach(categoryKey => {
         const category = CHECKLIST_TEMPLATE[categoryKey];
@@ -689,18 +759,46 @@ class CustomNumpad {
     }
     
     init() {
-        // Button click handlers
+        // Button handlers - Use touchend for better mobile response
         const buttons = this.overlay.querySelectorAll('.numpad-btn');
         buttons.forEach(btn => {
-            btn.addEventListener('click', (e) => {
+            // Remove any existing listeners
+            btn.replaceWith(btn.cloneNode(true));
+        });
+        
+        // Re-query after cloning
+        const freshButtons = this.overlay.querySelectorAll('.numpad-btn');
+        freshButtons.forEach(btn => {
+            // Use touchend for immediate response on touch devices
+            btn.addEventListener('touchend', (e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 this.handleButtonClick(btn);
+            }, { passive: false });
+            
+            // Fallback to click for non-touch devices
+            btn.addEventListener('click', (e) => {
+                // Only fire if touch didn't already handle it
+                if (e.detail !== 0) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.handleButtonClick(btn);
+                }
             });
         });
         
         // Backdrop click to close
         const backdrop = this.overlay.querySelector('.numpad-backdrop');
-        backdrop.addEventListener('click', () => this.close());
+        backdrop.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            this.close();
+        }, { passive: false });
+        
+        backdrop.addEventListener('click', (e) => {
+            if (e.detail !== 0) {
+                this.close();
+            }
+        });
         
         // Prevent scroll on overlay
         this.overlay.addEventListener('touchmove', (e) => {
@@ -711,6 +809,8 @@ class CustomNumpad {
     handleButtonClick(btn) {
         const value = btn.dataset.value;
         const action = btn.dataset.action;
+        
+        console.log('Button clicked:', value || action, 'Current value:', this.value);
         
         // Haptic feedback (if available)
         if (navigator.vibrate) {
@@ -726,11 +826,21 @@ class CustomNumpad {
             this.value += value;
         }
         
+        console.log('New value:', this.value);
+        
         this.updateDisplay();
+        this.updateTargetInput();
     }
     
     updateDisplay() {
         this.display.textContent = this.value || '';
+    }
+    
+    updateTargetInput() {
+        // Update the actual input field in real-time
+        if (this.targetInput) {
+            this.targetInput.value = this.value;
+        }
     }
     
     show(inputElement) {
@@ -805,3 +915,23 @@ function updateUnitNumberInput() {
         newInput.readOnly = false;
     }
 }
+
+// ============================================
+// DARK MODE / THEME MANAGEMENT
+// ============================================
+function applyTheme(mode) {
+    if (mode === 'dark') {
+        document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.remove('dark-mode');
+    }
+}
+
+// Apply saved theme on page load
+function initializeTheme() {
+    const savedMode = localStorage.getItem('appearanceMode') || 'light';
+    applyTheme(savedMode);
+}
+
+// Initialize theme before DOMContentLoaded
+initializeTheme();

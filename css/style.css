@@ -20,17 +20,44 @@
     --gray-700: #374151;
     --gray-800: #1f2937;
     --gray-900: #111827;
+    
+    /* Light Mode Theme Variables */
+    --bg-primary: #f9fafb;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #f3f4f6;
+    --text-primary: #111827;
+    --text-secondary: #4b5563;
+    --text-tertiary: #9ca3af;
+    --border-color: #e5e7eb;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Dark Mode Theme Variables */
+body.dark-mode {
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-tertiary: #334155;
+    --text-primary: #f1f5f9;
+    --text-secondary: #cbd5e1;
+    --text-tertiary: #94a3b8;
+    --border-color: #334155;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.6);
 }
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background: var(--gray-50);
-    color: var(--gray-900);
+    background: var(--bg-primary);
+    color: var(--text-primary);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
     touch-action: pan-y pan-x;
     -ms-touch-action: pan-y pan-x;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* ============================================
@@ -63,22 +90,24 @@ h1 {
     font-size: 28px;
     font-weight: 700;
     margin-bottom: 8px;
-    color: var(--gray-900);
+    color: var(--text-primary);
 }
 
 h2 {
     font-size: 20px;
     font-weight: 600;
     margin-bottom: 12px;
+    color: var(--text-primary);
 }
 
 h3 {
     font-size: 18px;
     font-weight: 600;
+    color: var(--text-primary);
 }
 
 .subtitle {
-    color: var(--gray-600);
+    color: var(--text-secondary);
     margin-bottom: 24px;
     font-size: 15px;
 }
@@ -93,7 +122,7 @@ h3 {
     display: block;
     font-weight: 500;
     margin-bottom: 8px;
-    color: var(--gray-800);
+    color: var(--text-primary);
     font-size: 14px;
 }
 
@@ -102,11 +131,12 @@ h3 {
 .form-group select {
     width: 100%;
     padding: 12px 16px;
-    border: 2px solid var(--gray-200);
+    border: 2px solid var(--border-color);
     border-radius: 8px;
     font-size: 16px;
-    transition: border-color 0.2s;
-    background: white;
+    transition: all 0.2s;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
 }
 
 .form-group input:focus,
@@ -170,9 +200,22 @@ h3 {
 .btn-icon {
     width: auto;
     padding: 8px 16px;
-    background: white;
-    border: 2px solid var(--gray-200);
+    background: var(--primary-color);
+    color: white;
+    border: none;
     margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.btn-icon:active {
+    transform: scale(0.95);
+    background: #1d4ed8;
+}
+
+body.dark-mode .btn-icon {
+    background: var(--primary-color);
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
 }
 
 .button-group {
@@ -188,9 +231,9 @@ h3 {
    HEADER
    ============================================ */
 .header {
-    background: white;
+    background: var(--bg-secondary);
     padding: 16px 20px;
-    border-bottom: 2px solid var(--gray-200);
+    border-bottom: 2px solid var(--border-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -201,29 +244,31 @@ h3 {
 
 .header-info h2 {
     margin: 0;
+    color: var(--text-primary);
 }
 
 #progressText {
     font-size: 14px;
-    color: var(--gray-600);
+    color: var(--text-secondary);
 }
 
 /* ============================================
    CHECKLIST ITEMS
    ============================================ */
 .category-section {
-    background: white;
+    background: var(--bg-secondary);
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 16px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
 }
 
 .category-title {
     font-size: 18px;
     font-weight: 600;
     margin-bottom: 16px;
-    color: var(--gray-900);
+    color: var(--text-primary);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -231,28 +276,33 @@ h3 {
 
 .checklist-item {
     padding: 16px;
-    border: 2px solid var(--gray-200);
+    border: 2px solid var(--border-color);
     border-radius: 8px;
     margin-bottom: 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     transition: all 0.2s;
-    background: white;
+    background: var(--bg-secondary);
 }
 
 .checklist-item.completed {
     border-color: var(--success-color);
-    background: #f0fdf4;
+    background: rgba(22, 163, 74, 0.1);
+}
+
+body.dark-mode .checklist-item.completed {
+    background: rgba(22, 163, 74, 0.15);
 }
 
 .checklist-item.skipped {
-    border-color: var(--gray-400);
-    background: #f9fafb;
+    border-color: var(--text-tertiary);
+    background: var(--bg-tertiary);
+    opacity: 0.7;
 }
 
 .checklist-item.skipped .item-status {
-    color: var(--gray-600);
+    color: var(--text-secondary);
     font-weight: 500;
 }
 
@@ -262,7 +312,7 @@ h3 {
 
 .item-name {
     font-weight: 500;
-    color: var(--gray-900);
+    color: var(--text-primary);
     margin-bottom: 4px;
 }
 
@@ -871,6 +921,13 @@ input, select, textarea {
     margin: 0 20px;
 }
 
+body.dark-mode .numpad-container {
+    background: rgba(30, 41, 59, 0.95);
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
 /* Numpad Display Area */
 .numpad-display {
     background: rgba(0, 0, 0, 0.05);
@@ -881,10 +938,15 @@ input, select, textarea {
     min-height: 80px;
 }
 
+body.dark-mode .numpad-display {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
 .numpad-label {
     font-size: 14px;
     font-weight: 600;
-    color: var(--gray-600);
+    color: var(--text-secondary);
     margin-bottom: 8px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -893,7 +955,7 @@ input, select, textarea {
 .numpad-value {
     font-size: 32px;
     font-weight: 700;
-    color: var(--gray-900);
+    color: var(--text-primary);
     min-height: 40px;
     display: flex;
     align-items: center;
@@ -919,6 +981,8 @@ input, select, textarea {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 12px;
+    /* Prevent double-tap zoom on numpad */
+    touch-action: manipulation;
 }
 
 /* Numpad Buttons - Rectangular Apple Style */
@@ -929,7 +993,7 @@ input, select, textarea {
     height: 64px;
     font-size: 28px;
     font-weight: 600;
-    color: var(--gray-900);
+    color: #111827;
     cursor: pointer;
     transition: all 0.15s ease;
     box-shadow: 
@@ -940,24 +1004,48 @@ input, select, textarea {
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
+    /* Force immediate response */
+    -webkit-touch-callout: none;
+}
+
+body.dark-mode .numpad-btn {
+    background: rgba(51, 65, 85, 0.9);
+    color: #f1f5f9;
+    box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.3),
+        0 1px 2px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
 }
 
 .numpad-btn:active {
     transform: scale(0.95);
-    background: var(--gray-100);
+    background: #f3f4f6;
     box-shadow: 
         0 1px 3px rgba(0, 0, 0, 0.12),
         0 0 0 1px rgba(0, 0, 0, 0.08) inset;
 }
 
+body.dark-mode .numpad-btn:active {
+    background: rgba(71, 85, 105, 0.9);
+}
+
 /* Special Button Styling */
 .numpad-backspace {
-    background: var(--gray-200);
-    color: var(--gray-700);
+    background: #e5e7eb;
+    color: #374151;
+}
+
+body.dark-mode .numpad-backspace {
+    background: rgba(30, 41, 59, 0.9);
+    color: #cbd5e1;
 }
 
 .numpad-backspace:active {
-    background: var(--gray-300);
+    background: #d1d5db;
+}
+
+body.dark-mode .numpad-backspace:active {
+    background: rgba(15, 23, 42, 0.9);
 }
 
 .numpad-done {
