@@ -408,6 +408,9 @@ function toggleSkipItem(itemKey) {
 // CAMERA INTERFACE
 // ============================================
 function openCamera(categoryKey, itemIndex, itemName) {
+    // Save current scroll position before opening camera
+    appState.savedScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+    
     appState.currentItem = {
         key: `${categoryKey}-${itemIndex}`,
         name: itemName

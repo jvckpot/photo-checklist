@@ -514,8 +514,16 @@ function closeCamera() {
     
     stopCamera();
     sessionPhotos = []; // Clear session
-    renderChecklist(); // Refresh checklist
+    
+    // Get the saved scroll position
+    const savedScroll = window.appState.savedScrollPosition || 0;
+    
+    // Show screen and restore scroll position
     showScreen('checklistScreen');
+    window.scrollTo({ top: savedScroll, behavior: 'auto' });
+    
+    // Refresh checklist
+    renderChecklist();
 }
 
 // ============================================
@@ -528,21 +536,27 @@ function doneWithPhotos() {
     // Get current item position in checklist
     const itemKey = window.appState.currentItem.key;
     
-    // Render checklist first
+    // Get the saved scroll position from when camera was opened
+    const savedScroll = window.appState.savedScrollPosition || 0;
+    
+    // Show screen first
+    showScreen('checklistScreen');
+    
+    // Immediately restore the saved scroll position (before any rendering)
+    window.scrollTo({ top: savedScroll, behavior: 'auto' });
+    
+    // Render checklist
     renderChecklist();
     
-    // Scroll to next item
+    // Now scroll to next item from the restored position
     scrollToNextItem(itemKey);
-    
-    // Return to checklist
-    showScreen('checklistScreen');
 }
 
 // ============================================
 // SCROLL TO NEXT ITEM
 // ============================================
 function scrollToNextItem(currentItemKey) {
-    // Small delay to ensure DOM has updated after renderChecklist()
+    // Delay to ensure DOM has updated and scroll position is restored
     setTimeout(() => {
         // Find all checklist items
         const allItems = document.querySelectorAll('.checklist-item');
@@ -576,18 +590,34 @@ function scrollToNextItem(currentItemKey) {
         
         // Scroll to the next incomplete item, or stay at current position
         if (nextIncompleteItem) {
-            // Smooth scroll with item centered on screen
+            // Check if item is already visible and centered
+            const rect = nextIncompleteItem.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+            const viewportCenter = viewportHeight / 2;
+            
+            // Check if item is already reasonably centered (within 20% of viewport center)
+            const itemCenter = rect.top + (rect.height / 2);
+            const isAlreadyCentered = Math.abs(itemCenter - viewportCenter) < (viewportHeight * 0.2);
+            
+            if (isAlreadyCentered) {
+                console.log('Next item already centered - no scroll needed');
+                return; // Don't scroll if already well-positioned
+            }
+            
+            // Use scrollIntoView with center block positioning
+            // This is the proper MDN-recommended approach for centering elements
             nextIncompleteItem.scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'center' 
+                behavior: 'smooth',
+                block: 'center',      // Center vertically in viewport
+                inline: 'nearest'     // Don't scroll horizontally
             });
             
-            console.log('Scrolled to next incomplete item');
+            console.log('Scrolled to next incomplete item (centered)');
         } else {
             console.log('No more incomplete items - staying at current position');
             // Don't scroll anywhere - user is probably at or near the end
         }
-    }, 100); // 100ms delay ensures DOM is fully rendered
+    }, 200); // 200ms delay ensures DOM fully rendered and position restored
 }
 
 // ============================================
