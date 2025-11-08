@@ -167,10 +167,7 @@ function initializeEventListeners() {
     document.getElementById('saveCustomization').addEventListener('click', saveCustomization);
     
     // Checklist Screen
-    document.getElementById('settingsBtn').addEventListener('click', () => {
-        renderCustomizeScreen();
-        showScreen('customizeScreen');
-    });
+    document.getElementById('restartInspectionBtn').addEventListener('click', restartInspection);
     document.getElementById('finishInspection').addEventListener('click', () => showScreen('reviewScreen'));
     
     // Review Screen
@@ -322,7 +319,7 @@ function renderChecklist() {
                     <div class="item-status">${statusText}</div>
                 </div>
                 <div class="item-actions">
-                    <button class="item-action-photo">${photoCount > 0 ? '✓' : '📷'}</button>
+                    <button class="item-action-photo">${photoCount > 0 ? '✓' : '<i class="fa-solid fa-camera"></i>'}</button>
                     <button class="item-action-skip" title="Skip this item (N/A)">${isSkipped ? '↶' : '⊘'}</button>
                 </div>
             `;
@@ -713,7 +710,50 @@ function renderReviewScreen() {
 }
 
 // ============================================
-// RESET APP
+// RESTART INSPECTION
+// ============================================
+function restartInspection() {
+    // Count total photos
+    const totalPhotos = Object.values(appState.photos).reduce((sum, photos) => sum + photos.length, 0);
+    
+    // Create eloquent confirmation message
+    let confirmMessage = 'Are you sure you want to restart this inspection?\n\n';
+    
+    if (totalPhotos > 0) {
+        confirmMessage += `This will permanently delete all ${totalPhotos} photo${totalPhotos !== 1 ? 's' : ''} you've captured.\n\n`;
+    }
+    
+    confirmMessage += 'This action cannot be undone.';
+    
+    if (!confirm(confirmMessage)) {
+        return; // User cancelled
+    }
+    
+    // Reset state but keep unit configuration
+    appState.photos = {};
+    appState.skippedItems = {};
+    
+    // Rebuild checklist with current configuration
+    buildChecklist();
+    
+    // Return to Setup Screen
+    showScreen('setupScreen');
+    
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    // Show success feedback
+    const header = document.querySelector('#checklistScreen .header-info');
+    const originalHTML = header.innerHTML;
+    header.innerHTML = '<h2>✓ Inspection Restarted</h2><p>All photos cleared</p>';
+    
+    setTimeout(() => {
+        header.innerHTML = originalHTML;
+    }, 2000);
+}
+
+// ============================================
+// RESET APP (Start New Inspection)
 // ============================================
 function resetApp() {
     if (!confirm('Start a new inspection? Current photos will be lost.')) {
